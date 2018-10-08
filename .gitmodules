@@ -1,0 +1,3 @@
+[submodule "ThirdParty/FORTH"]
+	path = ThirdParty/FORTH
+	url = https://github.com/ponyatov/nuFORTH.git
