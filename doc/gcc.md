@@ -64,3 +64,12 @@ Note then you must run it in `BSP/gnu` directory
 /tmp
 /tmp/src
 ```
+
+## Download source code packages
+
+```
+BSP/gnu$ make -f nuc876.mk gz
+```
+
+We'll skip this step assuming you already used BUildroot with `/home/user/gz`
+as a directory for its source code archive.
