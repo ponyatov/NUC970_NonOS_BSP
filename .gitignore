@@ -1,3 +1,10 @@
+# GNU software
+
+*~
+*.swp
+*.o
+docs/
+
 #For Keil
 obj/
 lst/
