@@ -133,20 +133,24 @@ float&#160;</td><td class="memItemRight" valign="bottom"><b>toolchain.GDB_VER</b
 <tr class="memdesc:ga7cd8731b23cced50196b093d83589350"><td class="mdescLeft">&#160;</td><td class="mdescRight">variable prefixes all commands to prefix cross-compiler <code>$PATH</code> before system one <br /></td></tr>
 <tr class="separator:ga7cd8731b23cced50196b093d83589350"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:gae2485a89a83f27da6debb072acf9dc7d"><td class="memItemLeft" align="right" valign="top">
-&#160;</td><td class="memItemRight" valign="bottom"><b>toolchain.CFG_ALL</b> = $(CROSS)</td></tr>
+&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__cfg.html#gae2485a89a83f27da6debb072acf9dc7d">toolchain.CFG_ALL</a> = $(CROSS)</td></tr>
+<tr class="memdesc:gae2485a89a83f27da6debb072acf9dc7d"><td class="mdescLeft">&#160;</td><td class="mdescRight">this will be the first argument for <code>configure</code> <br /></td></tr>
 <tr class="separator:gae2485a89a83f27da6debb072acf9dc7d"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ga36e301e01de5d528b7870a0822307430"><td class="memItemLeft" align="right" valign="top">
-&#160;</td><td class="memItemRight" valign="bottom"><b>toolchain.BINUTILS_CFG</b> = /include \</td></tr>
-<tr class="separator:ga36e301e01de5d528b7870a0822307430"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga62808e8a151ce6103ddc4190d4d601ab"><td class="memItemLeft" align="right" valign="top">
+&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__cfg.html#ga62808e8a151ce6103ddc4190d4d601ab">toolchain.GDB_CFG</a> = $(BINUTILS_CFG)</td></tr>
+<tr class="memdesc:ga62808e8a151ce6103ddc4190d4d601ab"><td class="mdescLeft">&#160;</td><td class="mdescRight">debugger options <br /></td></tr>
+<tr class="separator:ga62808e8a151ce6103ddc4190d4d601ab"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:gaff45d9945563edca28a56e61e2b880fa"><td class="memItemLeft" align="right" valign="top">
+&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__bintuils.html#gaff45d9945563edca28a56e61e2b880fa">toolchain.CFG_BINUTILS</a> = /include \</td></tr>
+<tr class="memdesc:gaff45d9945563edca28a56e61e2b880fa"><td class="mdescLeft">&#160;</td><td class="mdescRight">binutils options for bare-metal build <br /></td></tr>
+<tr class="separator:gaff45d9945563edca28a56e61e2b880fa"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:gaec1d6232570faf69684211055a7d9ae2"><td class="memItemLeft" align="right" valign="top">
 &#160;</td><td class="memItemRight" valign="bottom"><b>toolchain.target</b></td></tr>
 <tr class="separator:gaec1d6232570faf69684211055a7d9ae2"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ga2619c8edff86d7b3cb72a63c06785c7a"><td class="memItemLeft" align="right" valign="top">
-string&#160;</td><td class="memItemRight" valign="bottom"><b>toolchain.GCC_CFG</b> = &quot;c&quot; \</td></tr>
-<tr class="separator:ga2619c8edff86d7b3cb72a63c06785c7a"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ga62808e8a151ce6103ddc4190d4d601ab"><td class="memItemLeft" align="right" valign="top">
-&#160;</td><td class="memItemRight" valign="bottom"><b>toolchain.GDB_CFG</b> = $(BINUTILS_CFG)</td></tr>
-<tr class="separator:ga62808e8a151ce6103ddc4190d4d601ab"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga5e8683c2efa854934eb1bd82737bc180"><td class="memItemLeft" align="right" valign="top">
+string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__gcc0.html#ga5e8683c2efa854934eb1bd82737bc180">toolchain.CFG_GCC0</a> = &quot;c&quot; \</td></tr>
+<tr class="memdesc:ga5e8683c2efa854934eb1bd82737bc180"><td class="mdescLeft">&#160;</td><td class="mdescRight">gcc options for bare-metal build (for cross libc build) <br /></td></tr>
+<tr class="separator:ga5e8683c2efa854934eb1bd82737bc180"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>shared makefile for GNU toolchain build </p>

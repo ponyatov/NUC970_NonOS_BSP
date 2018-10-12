@@ -1,5 +1,5 @@
 all:
-	$(MAKE) -f nuc976.mk dirs
+	$(MAKE) -f nuc976.mk gcc0
 
 doxy: ./doxy_mk
 	./doxy_mk nuc976.mk

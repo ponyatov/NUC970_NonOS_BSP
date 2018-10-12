@@ -65,11 +65,12 @@ SYSROOT	= $(CWD)/sysroot
 ## @brief cross-compiler toolchain will be installed into this directory
 CROSS	= $(CWD)/cross
 
-## @}
-
-## @brief make directories
+# make directories
+.PHONY: dirs
 dirs:
 	mkdir -p $(GZ) $(TMP) $(SRC) $(SYSROOT) $(CROSS)
+
+## @}
 
 ## @defgroup cfg configure variables
 ## @{
@@ -77,21 +78,57 @@ dirs:
 ## @brief variable prefixes all commands to prefix cross-compiler `$PATH` before system one
 XPATH			= PATH=$(CROSS)/bin:$(PATH)
 
+## @brief this will be the first argument for `configure`
 CFG_ALL 		= --disable-nls --prefix=$(CROSS)
 
-BINUTILS_CFG	= --with-sysroot=$(SYS) --with-native-system-header-dir=/include  \
-				  --enable-lto --target=$(TARGET) $(CFG_CPU)
-
-GCC_CFG			= $(BINUTILS_CFG) --enable-languages="c" \
-					--disable-shared --disable-threads \
-					--without-headers --with-newlib \
-					--disable-bootstrap 
-
+## @brief debugger options
 GDB_CFG			= $(BINUTILS_CFG)
 
+## @}
 
+## @defgroup bintuils bintuils build
+## @{
+
+## @brief binutils options for bare-metal build
+CFG_BINUTILS	= --with-sysroot=$(SYS) --with-native-system-header-dir=/include  \
+				  --enable-lto --target=$(TARGET) $(CFG_CPU)
+
+.PHONY: binutils
+binutils: $(SRC)/$(BINUTILS)/configure
+	rm -rf $(TMP)/binutils ; mkdir $(TMP)/binutils ; cd $(TMP)/binutils ;\
+		$(XPATH) $< $(CFG_ALL) $(CFG_BINUTILS) &&\
+			$(MAKE) -j4 && $(MAKE) install
 
 ## @}
+
+## @defgroup gcc0 standalone C compiler for libc build
+## @{
+
+## @brief gcc options for bare-metal build (for cross libc build)
+CFG_GCC0		= $(BINUTILS_CFG) --enable-languages="c" \
+					--disable-shared --disable-threads \
+					--without-headers --with-newlib
+
+.PHONY: gcc0
+gcc0: $(SRC)/$(GCC)/configure
+	rm -rf $(TMP)/gcc ; mkdir $(TMP)/gcc ; cd $(TMP)/gcc ;\
+		$(XPATH) $< $(CFG_ALL) $(CFG_GCC0) &&\
+			$(MAKE) -j4 all-gcc && $(MAKE) install-gcc &&\
+			$(MAKE) -j4 all-target-libgcc && $(MAKE) install-target-libgcc
+
+## @}
+
+## @defgroup src unpack source code
+## @{
+
+$(SRC)/$(BINUTILS)/configure: $(GZ)/binutils/$(BINUTILS_GZ)
+	cd $(SRC) ; xzcat $< | tar x && touch $@
+$(SRC)/$(GCC)/configure: $(GZ)/gcc/$(GCC_GZ)
+	cd $(SRC) ; xzcat $< | tar x && touch $@
+$(SRC)/$(GDB)/configure: $(GZ)/gdb/$(GDB_GZ)
+	cd $(SRC) ; xzcat $< | tar x && touch $@
+
+## #}
 
 ## @}
 

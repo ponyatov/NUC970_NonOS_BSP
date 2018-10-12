@@ -111,7 +111,116 @@ $(function() {
 <h3>make dirs</h3>
 <p>If you want to follow build process step by step manually, this is a first command creates directory structure required for build toolchain from source code</p>
 <div class="fragment"><div class="line">BSP/gnu$ make -f nuc976.mk dirs</div></div><!-- fragment --><p> Note then you must run it in <code>BSP/gnu</code> directory </p><div class="fragment"><div class="line">~/BSP/gnu/nuc976.mk</div><div class="line">~/BSP/gnu/toolchain.mk</div><div class="line"></div><div class="line">~/BSP/gnu/cross</div><div class="line">~/BSP/gnu/sysroot</div><div class="line">~/BSP/gz</div><div class="line">/tmp</div><div class="line">/tmp/src</div></div><!-- fragment --><h2>Download source code packages</h2>
-<div class="fragment"><div class="line">BSP/gnu$ make -f nuc876.mk gz</div></div><!-- fragment --><p>We'll skip this step assuming you already used BUildroot with <code>/home/user/gz</code> as a directory for its source code archive. </p>
+<div class="fragment"><div class="line">BSP/gnu$ make -f nuc876.mk gz</div></div><!-- fragment --><p>We'll skip this step assuming you already used BUildroot with <code>/home/user/gz</code> as a directory for its source code archive.</p>
+<h2>Configuration</h2>
+<p>Source build of every package is managed by autotools, which generates special <code>configure</code> script resides in every source code package.</p>
+<p>Every <code>make package</code> command</p><ul>
+<li>extracts source to <code>$SRC/packagename-version</code>directory,</li>
+<li>runs <code>configure</code> in out-of-tree build directory in <code>$TMP/packagename-version</code></li>
+<li>and finally run long <code>$MAKE</code> process which build package and installs it in <code>$CROSS</code></li>
+</ul>
+<p>To control every package confgiguration we use <code>$CFG_PACKAGE</code> variables</p>
+<ul>
+<li><code>CFG_ALL</code> will be the first argument for <code>configure</code><ul>
+<li><code>--disable-nls</code><ul>
+<li>switch off cross-compiler localization: all messages will be in english only</li>
+</ul>
+</li>
+<li><code>--prefix=$CROSS</code><ul>
+<li>setup installation directory for all packages</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<h2>binutils: assembler, linker and object file tools</h2>
+<ul>
+<li><code>CFG_BINUTILS</code><ul>
+<li><code>--with-sysroot=$SYSROOT</code><ul>
+<li>setup <code>$SYSROOT</code> directory which will contain <code>/include</code> and <code>/lib</code>rary files (some include files will reside in gcc installation)</li>
+</ul>
+</li>
+<li><code>--with-native-system-header-dir=/include</code><ul>
+<li>set system <code>/include</code> directory <em>relative to sysroot</em></li>
+</ul>
+</li>
+<li><code>--enable-lto</code></li>
+<li><code>--target=$TARGET</code><ul>
+<li>select target system architecture by triplet</li>
+</ul>
+</li>
+<li><code>$CFG_CPU</code><ul>
+<li>provide flags specific for concrete $CPU you want to use</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<p><code>$TARGET</code> and <code>$CPU</code> <b>must be configured before <code><a class="el" href="toolchain_8mk.html" title="shared makefile for GNU toolchain build ">toolchain.mk</a></code> will be run</b>, so we use</p>
+<div class="fragment"><div class="line">{nuc976.mk}</div><div class="line"></div><div class="line">ARCH    = arm</div><div class="line">CPU     = arm926ej-s</div><div class="line">TARGET  = $(ARCH)-none-eabi</div><div class="line"></div><div class="line">CFG_CPU = --with-cpu=$(CPU)</div><div class="line"></div><div class="line">-include toolchain.mk</div></div><!-- fragment --><p>Run build command:</p>
+<div class="fragment"><div class="line">BSP/gnu$ make -f nuc976.mk binutils</div></div><!-- fragment --><p>Make target first tests is source code ready:</p>
+<div class="fragment"><div class="line">{toolchain.mk}</div><div class="line">binutils: $(SRC)/$(BINUTILS)/configure</div></div><!-- fragment --><h3>Source code unpack</h3>
+<p>All <em>makefile targets</em> makes packet build <em>uses automatic dependency resolving</em>:</p><ul>
+<li>package build requires source code unpacked</li>
+<li>to unpack source code we need downloaded <code>.tar.xz</code> in <code>$GZ</code></li>
+<li>if we have no source code archive, we <code>$WGET</code> it (see <code>make gz</code> above)</li>
+</ul>
+<div class="fragment"><div class="line">$(SRC)/$(BINUTILS)/configure: $(GZ)/binutils/$(BINUTILS_GZ)</div><div class="line">    cd $(SRC) ; xzcat $&lt; | tar x &amp;&amp; touch $@</div></div><!-- fragment --><p>When you run any package build it will first unpack source to <code>$SRC</code>:</p>
+<div class="fragment"><div class="line">BSP/gnu$  make -f nuc976.mk binutils</div><div class="line">cd /tmp/src ; xzcat /home/dpon/gz/binutils/binutils-2.29.1.tar.xz | tar x &amp;&amp; touch /tmp/src/binutils-2.29.1/configure</div></div><!-- fragment --><h3>Package build: makefile section structure</h3>
+<div class="fragment"><div class="line">[1] .PHONY: binutils</div><div class="line">[2] binutils: $(SRC)/$(BINUTILS)/configure [3]</div><div class="line">[4] rm -rf $(TMP)/binutils ; mkdir $(TMP)/binutils ; cd $(TMP)/binutils ;\  [5]</div><div class="line">        $(XPATH) $&lt; $(CFG_ALL) $(CFG_BINUTILS) &amp;&amp;\                          [6]</div><div class="line">            $(MAKE) -j4 &amp;&amp;\                                                 [7]</div><div class="line">             $(MAKE) install                                                [8]</div></div><!-- fragment --><ol type="1">
+<li>declare that this <em>make targets</em> is not files, but just a names:<ul>
+<li><code>make</code> tool will not check filesystem for this names to find what files were updated, and what files must be rebuilt by dependency</li>
+</ul>
+</li>
+<li><code>make</code> <em>targets</em><ul>
+<li>all file names (targets) in left side of a <em>make rule</em> point on files which should be rebuilt...</li>
+</ul>
+</li>
+<li><code>make</code> <em>sources</em><ul>
+<li>...if any file in sources list changed</li>
+</ul>
+</li>
+<li>make rule body must be padded with <code>TAB</code> symbols, no spaces<ul>
+<li>make rule body contains generic OS commands must be run for targets update</li>
+<li>In make rule commands you can substitute sources and tagets using pseudovariables:<ul>
+<li><code>$&lt;</code> first source name</li>
+<li><code>$^</code> full sources list splitted by spaces</li>
+<li><code>$?</code> only changed sources list</li>
+<li><code>$@</code> target name</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>(re)create empty directory for out-of-tree build</li>
+<li>run source package <code>configure</code> creates set of script files will be run build itself</li>
+<li><code>make</code> in parallel with <code>-jN</code> (N can be equal to number of processor cores on your workstation desktop)</li>
+<li>install builded package into <code>$CROSS</code> (<code>--prefix</code>)</li>
+</ol>
+<h2>gcc0: standalone C compiler for libc build</h2>
+<p>On first stage we need minimal C compiler with all features disabled, able to build code without use of standard C library (libc).</p>
+<p>gcc has deep bound with libc, so to build libc we need standalone gcc</p>
+<p><code>CFG_GCC0</code></p><ul>
+<li><code>--enable-languages="c"</code><ul>
+<li>we need only pure C for <code>libc</code> build</li>
+<li>C++ can be added only after <code>libc</code> will be available (dynamic memory management and multiprocessing required for C++ runtime)</li>
+</ul>
+</li>
+<li><code>--without-headers --with-newlib</code><ul>
+<li>disables libc usage for programs build</li>
+</ul>
+</li>
+<li><code>--disable-shared --disable-threads</code><ul>
+<li>switch off features can't be used w/o libc</li>
+</ul>
+</li>
+</ul>
+<div class="fragment"><div class="line">gcc0: $(SRC)/$(GCC)/configure                                               [1]</div><div class="line">    rm -rf $(TMP)/gcc ; mkdir $(TMP)/gcc ; cd $(TMP)/gcc ;\                 [2]</div><div class="line">        $(XPATH) $&lt; $(CFG_ALL) $(CFG_GCC0) &amp;&amp;\                              [3]</div><div class="line">            $(MAKE) -j4 all-gcc &amp;&amp; $(MAKE) install-gcc &amp;&amp;\                  [4]</div><div class="line">            $(MAKE) -j4 all-target-libgcc &amp;&amp; $(MAKE) install-target-libgcc  [5]</div></div><!-- fragment --><ol type="1">
+<li>package : source code</li>
+<li>out of tree build directory</li>
+<li>configure</li>
+<li>build &amp; install only gcc core</li>
+<li>build &amp; install only <code>libgcc</code> </li>
+</ol>
 </div></div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>
