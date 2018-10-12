@@ -185,3 +185,34 @@ cd /tmp/src ; xzcat /home/dpon/gz/binutils/binutils-2.29.1.tar.xz | tar x && tou
 7. `make` in parallel with `-jN`
 	(N can be equal to number of processor cores on your workstation desktop)
 8. install builded package into `$CROSS` (`--prefix`)
+
+## gcc0: standalone C compiler for libc build
+
+On first stage we need minimal C compiler with all features disabled, able
+to build code without use of standard C library (libc).
+
+gcc has deep bound with libc, so to build libc we need standalone gcc
+
+`CFG_GCC0`
+* `--enable-languages="c"`
+	* we need only pure C for `libc` build
+	* C++ can be added only after `libc` will be available
+		(dynamic memory management and multiprocessing required for C++ runtime)
+* `--without-headers --with-newlib`
+	* disables libc usage for programs build
+* `--disable-shared --disable-threads`
+	* switch off features can't be used w/o libc
+
+```
+gcc0: $(SRC)/$(GCC)/configure												[1]
+	rm -rf $(TMP)/gcc ; mkdir $(TMP)/gcc ; cd $(TMP)/gcc ;\					[2]
+		$(XPATH) $< $(CFG_ALL) $(CFG_GCC0) &&\								[3]
+			$(MAKE) -j4 all-gcc && $(MAKE) install-gcc &&\					[4]
+			$(MAKE) -j4 all-target-libgcc && $(MAKE) install-target-libgcc	[5]
+```
+1. package : source code
+2. out of tree build directory
+3. configure
+4. build & install only gcc core
+5. build & install only `libgcc`
+
