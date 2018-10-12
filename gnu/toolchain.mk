@@ -67,5 +67,31 @@ CROSS	= $(CWD)/cross
 
 ## @}
 
+## @brief make directories
+dirs:
+	mkdir -p $(GZ) $(TMP) $(SRC) $(SYSROOT) $(CROSS)
+
+## @defgroup cfg configure variables
+## @{
+
+## @brief variable prefixes all commands to prefix cross-compiler `$PATH` before system one
+XPATH			= PATH=$(CROSS)/bin:$(PATH)
+
+CFG_ALL 		= --disable-nls --prefix=$(CROSS)
+
+BINUTILS_CFG	= --with-sysroot=$(SYS) --with-native-system-header-dir=/include  \
+				  --enable-lto --target=$(TARGET) $(CFG_CPU)
+
+GCC_CFG			= $(BINUTILS_CFG) --enable-languages="c" \
+					--disable-shared --disable-threads \
+					--without-headers --with-newlib \
+					--disable-bootstrap 
+
+GDB_CFG			= $(BINUTILS_CFG)
+
+
+
+## @}
+
 ## @}
 

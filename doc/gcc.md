@@ -16,7 +16,7 @@ GNU toolchain includes this [packages](@ref packages)
 
 [Package versions](@ref versions)
 
-### Directories will be used for build & install
+## Directories will be used for build & install
 
 @ref dirs :
 
@@ -42,4 +42,25 @@ GNU toolchain includes this [packages](@ref packages)
 		and will affect all users on a developer workstation
 	* inplace we'll install it directly into `NUC970_NonOS_BSP/gnu` directory
 		and define special `$XPATH` variable used in all Makefiles to prefix
-		cross-compiler path before system one
+		cross-compiler `$PATH` before system one
+
+### make dirs
+
+If you want to follow build process step by step manually,
+this is a first command creates directory structure
+required for build toolchain from source code
+
+```
+BSP/gnu$ make -f nuc976.mk dirs
+```
+Note then you must run it in `BSP/gnu` directory
+```
+~/BSP/gnu/nuc976.mk
+~/BSP/gnu/toolchain.mk
+
+~/BSP/gnu/cross
+~/BSP/gnu/sysroot
+~/BSP/gz
+/tmp
+/tmp/src
+```
