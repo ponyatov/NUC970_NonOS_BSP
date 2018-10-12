@@ -1,0 +1,6 @@
+doxy_mk
+doxy_*.c
+gz/
+src/
+tmp/
+

@@ -7,4 +7,39 @@ https://github.com/OpenNuvoton/NUC970_NonOS_BSP/issues/3
 
 ### Currently we (Nuvoton) only plan to support Keil development environment  in NUC970 bare bone BSP.
 
+GNU toolchain includes this [packages](@ref packages)
 
+* `binutils`: assembler, linker, ELF and library file tools
+* `gcc`: C/C++ compiler
+* `gdb`: debugger
+* `gprof`: profiler
+
+[Package versions](@ref versions)
+
+### Directories will be used for build & install
+
+@ref dirs :
+
+* `CWD`
+	* current directory where `make` was first run
+	* (full specified path `/home/user/NUC970_NonOS_BSP/gnu`)
+* `GZ=$HOME/gz`
+	* archives: directory where `.tar.?z` files resides (toolchain packages source code)
+	* if you frequently use [Buildroot](https://buildroot.org/) it is good to share
+		all source code in one directory in your home path
+* `TMP=/tmp`
+	* temp directory for source code unpack and build
+	* for most software build in Linux source code directory does not used,
+		but *separated build* preferred for most cases out of source tree
+* `SRC=/tmp/src`
+	* directory for source code unpack
+* `SYSROOT=$CWD/sysroot`
+	* `sysroot` is a directory where `/include` and `/lib`rary files resides
+* `CROSS=$CWD/cross`
+	* cross-compiler toolchain will be installed into this directory
+	* we will not put builded toolchain system-wide as it traditionally
+		can be done in `/usr/local` by defeault: it requires root access
+		and will affect all users on a developer workstation
+	* inplace we'll install it directly into `NUC970_NonOS_BSP/gnu` directory
+		and define special `$XPATH` variable used in all Makefiles to prefix
+		cross-compiler path before system one

@@ -38,4 +38,6 @@ only because they are tightly bundled with the official BSP content.
 and developer's workstations uses Linux OS variants
 	* [GNU C/C++ compiler collection build](@ref gcc) for bare metal development on NUC970 processor series
 	* [GNU gdb remote debugging](@ref gdb)
+	* [newlib](@ref libc) standard C library for hardware-constrained embedded systems
+	* [FreeRTOS integration](@ref rtos) for HardRT and event-driven design
 * [Doxygen source code documenting system](@ref doxy)
