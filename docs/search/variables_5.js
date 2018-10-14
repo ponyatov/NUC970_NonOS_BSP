@@ -1,5 +1,4 @@
 var searchData=
 [
-  ['src',['SRC',['../group__dirs.html#ga1e6bbc9b0372547d56f227b108f4441e',1,'toolchain']]],
-  ['sysroot',['SYSROOT',['../group__dirs.html#gaec821aa14183c0329177ef316033bc1b',1,'toolchain']]]
+  ['wget',['WGET',['../group__gz.html#ga6405ca1cf6e9f45e9d2d06c0667f165c',1,'toolchain']]]
 ];

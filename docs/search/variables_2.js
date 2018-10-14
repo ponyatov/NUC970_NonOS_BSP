@@ -1,10 +1,7 @@
 var searchData=
 [
-  ['cfg_5fall',['CFG_ALL',['../group__cfg.html#gae2485a89a83f27da6debb072acf9dc7d',1,'toolchain']]],
-  ['cfg_5fbinutils',['CFG_BINUTILS',['../group__bintuils.html#gaff45d9945563edca28a56e61e2b880fa',1,'toolchain']]],
-  ['cfg_5fcpu',['CFG_CPU',['../nuc976_8mk.html#a9afebc954019af1a3eb2c2965e70fe95',1,'nuc976']]],
-  ['cfg_5fgcc0',['CFG_GCC0',['../group__gcc0.html#ga5e8683c2efa854934eb1bd82737bc180',1,'toolchain']]],
-  ['cpu',['CPU',['../nuc976_8mk.html#aacb311d602d953acc285ee770d954a59',1,'nuc976']]],
-  ['cross',['CROSS',['../group__dirs.html#gac21cca8f67345bbce1187433a9fcd59a',1,'toolchain']]],
-  ['cwd',['CWD',['../group__dirs.html#gad6e39bfc73c76d13f10955aa7ab4f4a6',1,'toolchain']]]
+  ['gcc',['GCC',['../group__packages.html#ga1be6b330dec6205411ef05a2c24d10c4',1,'toolchain']]],
+  ['gdb',['GDB',['../group__packages.html#ga55deeb3c49a9062840c6b1e309775f7c',1,'toolchain']]],
+  ['gdb_5fcfg',['GDB_CFG',['../group__cfg.html#ga7fcd7aeab3fa37359f080f3a91bb70c5',1,'toolchain']]],
+  ['gz',['GZ',['../group__dirs.html#ga5b7a4848eabe14e4c818ad05e54165ce',1,'toolchain']]]
 ];

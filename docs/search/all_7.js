@@ -1,5 +1,4 @@
 var searchData=
 [
-  ['newlib',['newlib',['../libc.html',1,'']]],
-  ['nuc976_2emk',['nuc976.mk',['../nuc976_8mk.html',1,'']]]
+  ['package_20versions',['package versions',['../group__versions.html',1,'']]]
 ];

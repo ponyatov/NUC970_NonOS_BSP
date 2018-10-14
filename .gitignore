@@ -3,7 +3,6 @@
 *~
 *.swp
 *.o
-docs/
 
 #For Keil
 obj/
