@@ -281,5 +281,23 @@ $(GZ)/$(ISL_GZ):
 
 ## @}
 
+## @defgroup clean clean up after toolchain build
+## @brief `make clean`
+## @{
+
+.PHONY: clean
+clean:
+	rm -rf $(SRC) &
+	rm -rf $(TMP)/binutils &
+	rm -rf $(TMP)/gcc0 &
+	rm -rf $(TMP)/gdb &
+	rm -rf $(TMP)/gmp0 &
+	rm -rf $(TMP)/mpfr0 &
+	rm -rf $(TMP)/mpc0 &
+	rm -rf $(TMP)/isl0 &
+
+#$ @}
+
+
 ## @}
 

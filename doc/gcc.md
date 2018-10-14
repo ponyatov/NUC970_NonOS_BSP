@@ -257,3 +257,12 @@ We need it for @ref gdb
 BSP/gnu$ make -f nuc976.mk gdb
 ```
 
+## clean up after toolchain build
+
+After toolchain build we have a lot of temporary files, so ant end of process
+we must do @ref clean
+
+```
+BSP/gnu$ make -f nuc976.mk clean
+```
+
