@@ -3,6 +3,7 @@
 *~
 *.swp
 *.o
+docs/
 
 #For Keil
 obj/
@@ -48,3 +49,4 @@ lst/
 !ThirdParty/FATFS/doc/img/mkfatimg.zip
 !SampleCode/CRYPTO_SHA_MTP/image.bin
 
+doxygen_sqlite3.db
