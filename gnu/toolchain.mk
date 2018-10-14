@@ -22,13 +22,20 @@ GCC_VER			= 8.2.0
 GDB_VER			= 8.2
 # 7.11.1
 
-## @defgroup libversions support libs
+## @defgroup lib0versions support libs
 ## @{
 
 GMP_VER			= 6.1.0
 MPFR_VER		= 3.1.4
 MPC_VER			= 1.0.3
 ISL_VER			= 0.18
+
+## @}
+
+## @defgroup libversions target system libraries
+## @{
+
+NEWLIB_VER		= 3.0.0.20180831
 
 ## @}
 
@@ -46,7 +53,7 @@ GCC				= gcc-$(GCC_VER)
 ## @brief debugger
 GDB				= gdb-$(GDB_VER)
 
-## @defgroup libpackages libs
+## @defgroup lib0packages libs
 ## @{
 
 GMP				= gmp-$(GMP_VER)
@@ -55,6 +62,14 @@ MPC				= mpc-$(MPC_VER)
 ISL				= isl-$(ISL_VER)
 
 ## @}
+
+## @defgroup libpackages target system libraries
+## @{
+
+NEWLIB			= newlib-$(NEWLIB_VER)
+
+## @}
+
 
 ## @}
 
@@ -74,6 +89,8 @@ MPC_GZ			= $(MPC).tar.gz
 ISL_GZ			= $(ISL).tar.bz2
 
 ## @}
+
+NEWLIB_GZ		= $(NEWLIB).tar.gz
 
 ## @}
 
@@ -224,7 +241,7 @@ $(SRC)/$(GCC)/configure: $(GZ)/gcc/$(GCC_GZ)
 $(SRC)/$(GDB)/configure: $(GZ)/gdb/$(GDB_GZ)
 	cd $(SRC) ; xzcat $< | tar x && touch $@
 
-## @defgroup srclibs libs
+## @defgroup lib0src libs
 ## @{
 
 $(SRC)/$(GMP)/configure: $(GZ)/$(GMP_GZ)
@@ -235,6 +252,14 @@ $(SRC)/$(MPC)/configure: $(GZ)/$(MPC_GZ)
 	cd $(SRC) ;  zcat $< | tar x && touch $@
 $(SRC)/$(ISL)/configure: $(GZ)/$(ISL_GZ)
 	cd $(SRC) ; bzcat $< | tar x && touch $@
+
+## @}
+
+## @defgroup libsrc target libs
+## @{
+
+$(SRC)/$(NEWLIB)/configure: $(GZ)/$(NEWLIB_GZ)
+	cd $(SRC) ;  zcat $< | tar x && touch $@
 
 ## @}
 
@@ -279,6 +304,9 @@ $(GZ)/$(ISL_GZ):
 
 ## @}
 
+$(GZ)/$(NEWLIB_GZ):
+	$(WGET) -O $@ ftp://sourceware.org/pub/newlib/$(NEWLIB_GZ)
+
 ## @}
 
 ## @defgroup clean clean up after toolchain build
@@ -297,6 +325,19 @@ clean:
 	rm -rf $(TMP)/isl0 &
 
 #$ @}
+
+## @defgroup libc newlib/libc standard C language library
+## @{
+
+CFG_LIBC = $(CFG_BINUTILS) --prefix=$(CROSS)/libc
+
+.PHONY: libc
+libc: $(SRC)/$(NEWLIB)/configure
+	rm -rf $(TMP)/$@ ; mkdir $(TMP)/$@ ; cd $(TMP)/$@ ;\
+		$(XPATH) $< $(CFG_ALL) $(CFG_LIBC) &&\
+			$(XPATH) $(MAKE) -j4 && $(XPATH) $(MAKE) install-strip
+
+## @}
 
 
 ## @}

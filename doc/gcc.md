@@ -259,7 +259,7 @@ BSP/gnu$ make -f nuc976.mk gdb
 
 ## clean up after toolchain build
 
-After toolchain build we have a lot of temporary files, so ant end of process
+After toolchain build we have a lot of temporary files, so ant end of the process
 we must do @ref clean
 
 ```
