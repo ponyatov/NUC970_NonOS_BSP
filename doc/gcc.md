@@ -186,6 +186,35 @@ cd /tmp/src ; xzcat /home/dpon/gz/binutils/binutils-2.29.1.tar.xz | tar x && tou
 	(N can be equal to number of processor cores on your workstation desktop)
 8. install builded package into `$CROSS` (`--prefix`)
 
+## libs0: support libraries required for GCC build
+
+For gcc build we require a set of support libraries. We can rely on `libxxx-dev`
+packages provided by your Linux distribution, but for devkit portability we'll
+build them from sources like a part of this toolchain build.
+
+@dot
+digraph {
+	rankdir=LR;
+	gmp -> mpfr -> mpc;
+	gmp -> isl;
+	gmp -> gcc;
+	mpfr -> gcc;
+	mpc -> gcc;
+	isl -> gcc [label=optional];
+	{rank=same; gmp; isl; }
+}
+@enddot
+
+* `gmp`
+* `mpfr` <- `gmp`
+* `mpc` <-  `mpfr`
+* `isl` <- `gmp`
+	* loop optimizations
+
+```
+BSP/gnu$ make -f nuc976.mk libs0
+```
+
 ## gcc0: standalone C compiler for libc build
 
 On first stage we need minimal C compiler with all features disabled, able
@@ -215,4 +244,16 @@ gcc0: $(SRC)/$(GCC)/configure												[1]
 3. configure
 4. build & install only gcc core
 5. build & install only `libgcc`
+
+```
+BSP/gnu$ make -f nuc976.mk gcc0
+```
+
+## `gdb`: GNU debugger
+
+We need it for @ref gdb
+
+```
+BSP/gnu$ make -f nuc976.mk gdb
+```
 

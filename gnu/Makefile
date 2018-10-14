@@ -1,5 +1,5 @@
 all:
-	$(MAKE) -f nuc976.mk gcc0
+	$(MAKE) -f nuc976.mk dirs binutils libs0 gcc0 gdb
 
 doxy: ./doxy_mk
 	./doxy_mk nuc976.mk
