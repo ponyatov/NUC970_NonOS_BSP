@@ -1,4 +1,5 @@
 # Disclaimer
+
 The Software is furnished "AS IS", without warranty as to performance or results, and
 the entire risk as to performance or results is assumed by YOU. Nuvoton disclaims all
 warranties, express, implied or otherwise, with regard to the Software, its use, or
@@ -26,3 +27,17 @@ trademarks of products and companies mentioned in this datasheet belong to their
 owners.
 
 **Copyright (C) 2016 Nuvoton Technology Corp. All rights reserved**
+
+### These parts do not officially supported
+
+*These parts of the BSP project do not officially supported by Nuvoton Technology Corp.*,
+as these extra addons were made by the developers' community and were included
+only because they are tightly bundled with the official BSP content.
+
+* [GNU toolchain support](@ref gnu) for OpenSource compilers
+and developer's workstations uses Linux OS variants
+	* [GNU C/C++ compiler collection build](@ref gcc) for bare metal development on NUC970 processor series
+	* [GNU gdb remote debugging](@ref gdb)
+	* [newlib](@ref libc) standard C library for hardware-constrained embedded systems
+	* [FreeRTOS integration](@ref rtos) for HardRT and event-driven design
+* [Doxygen source code documenting system](@ref doxy)
