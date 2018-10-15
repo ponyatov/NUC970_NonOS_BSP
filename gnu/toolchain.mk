@@ -129,6 +129,13 @@ dirs:
 ## @brief variable prefixes all commands to prefix cross-compiler `$PATH` before system one
 XPATH			= PATH=$(CROSS)/bin:$(PATH)
 
+## @brief detect number or CPU cores for parallel make
+##			(override in command line to get less load with background build)
+NUMCPU			?= $(shell cat /proc/cpuinfo |grep processor|wc -l)
+
+## @brief command to run make in parallel
+MAKE_J			= $(MAKE) -j$(NUMCPU)
+
 ## @brief this will be the first argument for `configure`
 CFG_ALL 		= --disable-nls --prefix=$(CROSS)
 
@@ -137,62 +144,13 @@ GDB_CFG			= $(BINUTILS_CFG)
 
 ## @}
 
-## @defgroup bintuils bintuils build
-## @brief `make binutils`
-## @{
-
-## @brief binutils options for bare-metal build
-CFG_BINUTILS	= --with-sysroot=$(SYSROOT) --with-native-system-header-dir=/include \
-				  --enable-lto --target=$(TARGET) $(CFG_CPU)
-
-.PHONY: binutils
-binutils: $(SRC)/$(BINUTILS)/configure
-	rm -rf $(TMP)/$@ ; mkdir $(TMP)/$@ ; cd $(TMP)/$@ ;\
-		$(XPATH) $< $(CFG_ALL) $(CFG_BINUTILS) &&\
-			$(MAKE) -j4 && $(MAKE) install-strip
-
-## @}
-
-## @defgroup gcc0 standalone C compiler for libc build
-## @brief `make gcc0`
+## @defgroup libs libraries required for toolchain build
+## @brief `make libs0 [ gcc0 mpfr0 mpc0 isl0 ]`
 ## @{
 
 ## @brief support libs configuration for `gcc[0]`
 CFG_WITH_LIBS	= --with-gmp=$(CROSS) --with-mpfr=$(CROSS) --with-mpc=$(CROSS) \
 				  --with-isl=$(CROSS)
-
-## @brief gcc options for bare-metal build (for cross libc build)
-CFG_GCC0		= $(CFG_BINUTILS) $(CFG_WITH_LIBS) --enable-languages="c" \
-					--disable-shared --disable-threads \
-					--without-headers --with-newlib
-
-.PHONY: gcc0
-gcc0: $(SRC)/$(GCC)/configure
-	rm -rf $(TMP)/$@ ; mkdir $(TMP)/$@ ; cd $(TMP)/$@ ;\
-		$(XPATH) $< $(CFG_ALL) $(CFG_GCC0) &&\
-			$(MAKE) -j4 all-gcc && $(MAKE) install-gcc &&\
-			$(MAKE) -j4 all-target-libgcc && $(MAKE) install-target-libgcc
-
-## @}
-
-## @defgroup gdb GNU debugger
-## @brief `make gdb`
-## @{
-
-## @brief configure gdb build for specific target
-CFG_GDB			= $(CFG_BINUTILS)
-
-.PHONY: gdb
-gdb: $(SRC)/$(GDB)/configure
-	rm -rf $(TMP)/$@ ; mkdir $(TMP)/$@ ; cd $(TMP)/$@ ;\
-		$(XPATH) $< $(CFG_ALL) $(CFG_GDB) &&\
-			$(MAKE) -j4 && $(MAKE) install
-
-## @}
-
-## @defgroup libs libraries required for gcc build
-## @brief `make libs0 [ gcc0 mpfr0 mpc0 isl0 ]`
-## @{
 
 ## @brief options for all libs0
 CFG_LIBS	= --disable-shared $(CFG_WITH_LIBS)
@@ -209,25 +167,77 @@ libs0: gmp0 mpfr0 mpc0 isl0
 gmp0: $(SRC)/$(GMP)/configure
 	rm -rf $(TMP)/$@ ; mkdir $(TMP)/$@ ; cd $(TMP)/$@ ;\
 		$(XPATH) $< $(CFG_ALL) $(CFG_GMP) &&\
-			$(MAKE) -j4 && $(MAKE) install-strip
+			$(MAKE_J) && $(MAKE) install-strip
 
 .PHONY: mpfr0
 mpfr0: $(SRC)/$(MPFR)/configure
 	rm -rf $(TMP)/$@ ; mkdir $(TMP)/$@ ; cd $(TMP)/$@ ;\
 		$(XPATH) $< $(CFG_ALL) $(CFG_MPFR) &&\
-			$(MAKE) -j4 && $(MAKE) install-strip
+			$(MAKE_J) && $(MAKE) install-strip
 
 .PHONY: mpc0
 mpc0: $(SRC)/$(MPC)/configure
 	rm -rf $(TMP)/$@ ; mkdir $(TMP)/$@ ; cd $(TMP)/$@ ;\
 		$(XPATH) $< $(CFG_ALL) $(CFG_MPC) &&\
-			$(MAKE) -j4 && $(MAKE) install-strip
+			$(MAKE_J) && $(MAKE) install-strip
 
 .PHONY: isl0
 isl0: $(SRC)/$(ISL)/configure
 	rm -rf $(TMP)/$@ ; mkdir $(TMP)/$@ ; cd $(TMP)/$@ ;\
 		$(XPATH) $< $(CFG_ALL) $(CFG_ISL) &&\
-			$(MAKE) -j4 && $(MAKE) install-strip
+			$(MAKE_J) && $(MAKE) install-strip
+
+## @}
+
+
+## @defgroup bintuils bintuils build
+## @brief `make binutils`
+## @{
+
+## @brief binutils options for bare-metal build
+CFG_BINUTILS	= --with-sysroot=$(SYSROOT) --with-native-system-header-dir=/include \
+				  --enable-lto --target=$(TARGET) $(CFG_CPU) \
+# isl
+CFG_BINUTILS	+= $(CFG_WITH_LIBS)
+
+.PHONY: binutils
+binutils: $(SRC)/$(BINUTILS)/configure
+	rm -rf $(TMP)/$@ ; mkdir $(TMP)/$@ ; cd $(TMP)/$@ ;\
+		$(XPATH) $< $(CFG_ALL) $(CFG_BINUTILS) &&\
+			$(MAKE_J) && $(MAKE) install-strip
+
+## @}
+
+## @defgroup gcc0 standalone C compiler for libc build
+## @brief `make gcc0`
+## @{
+
+## @brief gcc options for bare-metal build (for cross libc build)
+CFG_GCC0		= $(CFG_BINUTILS) --enable-languages="c" \
+					--disable-shared --disable-threads \
+					--without-headers --with-newlib
+
+.PHONY: gcc0
+gcc0: $(SRC)/$(GCC)/configure
+	rm -rf $(TMP)/$@ ; mkdir $(TMP)/$@ ; cd $(TMP)/$@ ;\
+		$(XPATH) $< $(CFG_ALL) $(CFG_GCC0) &&\
+			$(MAKE_J) all-gcc           && $(MAKE) install-gcc             &&\
+			$(MAKE_J) all-target-libgcc && $(MAKE) install-target-libgcc
+
+## @}
+
+## @defgroup gdb GNU debugger
+## @brief `make gdb`
+## @{
+
+## @brief configure gdb build for specific target
+CFG_GDB			= $(CFG_BINUTILS)
+
+.PHONY: gdb
+gdb: $(SRC)/$(GDB)/configure
+	rm -rf $(TMP)/$@ ; mkdir $(TMP)/$@ ; cd $(TMP)/$@ ;\
+		$(XPATH) $< $(CFG_ALL) $(CFG_GDB) &&\
+			$(MAKE_J) && $(MAKE) install
 
 ## @}
 

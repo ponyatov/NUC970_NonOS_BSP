@@ -86,12 +86,60 @@ Every `make package` command
 
 To control every package confgiguration we use `$CFG_PACKAGE` variables
 
+* `XPATH = PATH=$CROSS/bin:$PATH`
+	* all commands must be prefixed with `$XPATH` to make our toolchain
+		programs available for run and search on `configure` run
+
+* `NUMCPU`
+	* detect number of CPU cores on your system for parallel `$MAKE`
+	* if build process creates high load on your system and fails due to say
+		low memory (I have this with gcc build on ramdisk), you can override
+		this parameter in `make` run command line:
+```
+BSP/gnu$ NUMCPU=1 make -f nuc976.mk gcc0
+```
+
+* `MAKE_J = $MAKE -j$NUMCPU`
+	* most software packages can be build with parallel `$MAKE`
+
 * `CFG_ALL` will be the first argument for `configure`
 	* `--disable-nls`
 		* switch off cross-compiler localization: 
 			all messages will be in english only
 	* `--prefix=$CROSS`
 		* setup installation directory for all packages
+
+## libs0: support libraries required for GCC build
+
+For `binutils` & `gcc` build we require a set of support libraries. We can rely on
+`libxxx-dev` packages provided by your Linux distribution, but for devkit 
+portability we'll build them from sources like a part of this toolchain build.
+
+@dot
+digraph {
+	rankdir=LR;
+	gmp -> mpfr -> mpc;
+	gmp -> isl;
+	gmp -> gcc;
+	mpfr -> gcc;
+	mpc -> gcc;
+	isl -> gcc [label=optional];
+	isl -> binutils [label=optional];
+	{rank=same; gmp; isl; }
+	{rank=same; binutils; mpc; }
+	binutils -> gcc [label="configure\noptions"];
+}
+@enddot
+
+* `gmp`
+* `mpfr` <- `gmp`
+* `mpc` <-  `mpfr`
+* `isl` <- `gmp`
+	* loop optimizations
+
+```
+BSP/gnu$ make -f nuc976.mk libs0
+```
 
 ## binutils: assembler, linker and object file tools
 
@@ -160,7 +208,7 @@ cd /tmp/src ; xzcat /home/dpon/gz/binutils/binutils-2.29.1.tar.xz | tar x && tou
 [4]	rm -rf $(TMP)/binutils ; mkdir $(TMP)/binutils ; cd $(TMP)/binutils ;\	[5]
 		$(XPATH) $< $(CFG_ALL) $(CFG_BINUTILS) &&\ 							[6]
 			$(MAKE) -j4 &&\						    						[7]
-			 $(MAKE) install												[8]
+			$(MAKE) install													[8]
 ```
 
 1. declare that this *make targets* is not files, but just a names:
@@ -185,35 +233,6 @@ cd /tmp/src ; xzcat /home/dpon/gz/binutils/binutils-2.29.1.tar.xz | tar x && tou
 7. `make` in parallel with `-jN`
 	(N can be equal to number of processor cores on your workstation desktop)
 8. install builded package into `$CROSS` (`--prefix`)
-
-## libs0: support libraries required for GCC build
-
-For gcc build we require a set of support libraries. We can rely on `libxxx-dev`
-packages provided by your Linux distribution, but for devkit portability we'll
-build them from sources like a part of this toolchain build.
-
-@dot
-digraph {
-	rankdir=LR;
-	gmp -> mpfr -> mpc;
-	gmp -> isl;
-	gmp -> gcc;
-	mpfr -> gcc;
-	mpc -> gcc;
-	isl -> gcc [label=optional];
-	{rank=same; gmp; isl; }
-}
-@enddot
-
-* `gmp`
-* `mpfr` <- `gmp`
-* `mpc` <-  `mpfr`
-* `isl` <- `gmp`
-	* loop optimizations
-
-```
-BSP/gnu$ make -f nuc976.mk libs0
-```
 
 ## gcc0: standalone C compiler for libc build
 
@@ -259,10 +278,19 @@ BSP/gnu$ make -f nuc976.mk gdb
 
 ## clean up after toolchain build
 
-After toolchain build we have a lot of temporary files, so ant end of the process
-we must do @ref clean
+After toolchain build we have a lot of temporary files, so at the end of the
+process we must do @ref clean
 
 ```
-BSP/gnu$ make -f nuc976.mk clean
+BSP/gnu$ make clean
+```
+
+### distclean
+
+In case you need full rebuild with all generated files clean
+(`$CROSS` compiler, target libraries in `$SYSROOT`, documentation, etc), 
+you can use
+```
+BSP/gnu$ make distclean
 ```
 

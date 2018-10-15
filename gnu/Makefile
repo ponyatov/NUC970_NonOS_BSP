@@ -1,7 +1,7 @@
 NUC = -f nuc976.mk
 
 toolchain:
-	$(MAKE) $(NUC) dirs binutils libs0 gcc0 gdb
+	$(MAKE) $(NUC) dirs libs0 binutils gcc0 gdb
 
 clean:
 	$(MAKE) $(NUC) clean
