@@ -1,5 +1,14 @@
+NUC = -f nuc976.mk
+
 toolchain:
-	$(MAKE) -f nuc976.mk dirs binutils libs0 gcc0 gdb
+	$(MAKE) $(NUC) dirs binutils libs0 gcc0 gdb
+
+clean:
+	$(MAKE) $(NUC) clean
+
+distclean:
+	$(MAKE) $(NUC) distclean
+
 
 doxy: ./doxy_mk
 	./doxy_mk nuc976.mk

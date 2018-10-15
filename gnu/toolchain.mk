@@ -324,6 +324,16 @@ clean:
 	rm -rf $(TMP)/mpc0 &
 	rm -rf $(TMP)/isl0 &
 
+## @defgroup distclen clean up all all toolchain and target files
+## @brief `make distclean`
+## @{
+
+.PHONY: distclean
+distclean:
+	$(MAKE) clean ; rm -rf $(CROSS) $(SYSROOT) &
+
+## @}
+
 #$ @}
 
 ## @defgroup libc newlib/libc standard C language library
