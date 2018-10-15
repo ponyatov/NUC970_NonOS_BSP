@@ -139,9 +139,6 @@ MAKE_J			= $(MAKE) -j$(NUMCPU)
 ## @brief this will be the first argument for `configure`
 CFG_ALL 		= --disable-nls --prefix=$(CROSS)
 
-## @brief debugger options
-GDB_CFG			= $(BINUTILS_CFG)
-
 ## @}
 
 ## @defgroup libs libraries required for toolchain build
@@ -231,7 +228,7 @@ gcc0: $(SRC)/$(GCC)/configure
 ## @{
 
 ## @brief configure gdb build for specific target
-CFG_GDB			= $(CFG_BINUTILS)
+CFG_GDB			= $(CFG_BINUTILS) --disable-sim --with-python=no
 
 .PHONY: gdb
 gdb: $(SRC)/$(GDB)/configure
@@ -344,18 +341,43 @@ distclean:
 
 ## @}
 
-#$ @}
+## @}
 
 ## @defgroup libc newlib/libc standard C language library
 ## @{
 
-CFG_LIBC = $(CFG_BINUTILS) --prefix=$(CROSS)/libc
+CFG_LIBC = $(CFG_BINUTILS) --prefix=$(SYSROOT)/libc.pfx --with-build-sysroot=$(SYSROOT)/libc.sys \
+			--disable-newlib-supplied-syscalls
 
 .PHONY: libc
 libc: $(SRC)/$(NEWLIB)/configure
 	rm -rf $(TMP)/$@ ; mkdir $(TMP)/$@ ; cd $(TMP)/$@ ;\
 		$(XPATH) $< $(CFG_ALL) $(CFG_LIBC) &&\
-			$(XPATH) $(MAKE) -j4 && $(XPATH) $(MAKE) install-strip
+			$(XPATH) $(MAKE_J) &&\
+			$(XPATH) $(MAKE) install
+
+## @defgroup nano newlib-nano libc variant
+## @{
+
+CFG_NANO = $(CFG_BINUTILS) --prefix=$(SYSROOT)/nano \
+		--enable-newlib-reent-small --disable-newlib-fvwrite-in-streamio \
+		--disable-newlib-fseek-optimization --disable-newlib-wide-orient \
+		--enable-newlib-nano-malloc --disable-newlib-unbuf-stream-opt \
+		--enable-lite-exit --enable-newlib-global-atexit \
+		--enable-newlib-nano-formatted-io
+
+.PHONY: nano
+nano: $(SRC)/nano/configure
+	rm -rf $(TMP)/$@ ; mkdir $(TMP)/$@ ; cd $(TMP)/$@ ;\
+		$(XPATH) $< $(CFG_ALL) $(CFG_NANO)
+# &&\
+#			$(XPATH) $(MAKE_J) &&\
+#			$(XPATH) $(MAKE) install
+
+$(SRC)/nano/configure:
+	cd $(SRC) ; git clone -b newlib-nano-2.1 --depth=1 https://github.com/32bitmicro/newlib-nano-2.git nano
+
+## @}
 
 ## @}
 

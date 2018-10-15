@@ -294,3 +294,32 @@ you can use
 BSP/gnu$ make distclean
 ```
 
+## newlib-nano
+
+For writing more or less portable C code we need some POSIX compatibility,
+by using standard C library: `libc`. The variant we choose is a `newlib-nano`
+provides minimized libc for MCU-based systems, approved by ARM 
+
+* `--disable-nls` do not use Native Language Support
+* `--enable-newlib-io-long-double`   enable long double type support in IO functions printf/scanf
+* `--enable-newlib-io-long-long`   enable long long type support in IO functions like printf/scanf
+* `--enable-newlib-io-c99-formats`   enable C99 support in IO functions like printf/scanf
+* `--enable-newlib-register-fini`   enable finalization function registration using atexit
+* `--disable-newlib-supplied-syscalls` disable newlib from supplying syscalls (__NO_SYSCALLS__)
+
+* `--disable-newlib-fvwrite-in-streamio`    disable iov in streamio
+* `--disable-newlib-fseek-optimization`    disable fseek optimization
+* `--disable-newlib-wide-orient`    Turn off wide orientation in streamio
+* `--disable-newlib-unbuf-stream-opt`    disable unbuffered stream optimization in streamio
+* `--enable-newlib-nano-malloc`    use small-footprint nano-malloc implementation
+* `--enable-lite-exit`	enable light weight exit
+* `--enable-newlib-global-atexit`	enable atexit data structure as global
+* `--enable-newlib-nano-formatted-io`    Use nano version formatted IO
+* `--enable-newlib-reent-small`
+
+* `--enable-newlib-retargetable-locking` ???
+
+```
+BSP/gnu$ make -f nuc976.mk nano
+```
+
