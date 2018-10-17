@@ -359,7 +359,7 @@ libc: $(SRC)/$(NEWLIB)/configure
 ## @defgroup nano newlib-nano libc variant
 ## @{
 
-CFG_NANO = $(CFG_BINUTILS) --prefix=$(SYSROOT)/nano \
+CFG_NANO = $(CFG_BINUTILS) --without-isl --prefix=$(SYSROOT)/nano \
 		--enable-newlib-reent-small --disable-newlib-fvwrite-in-streamio \
 		--disable-newlib-fseek-optimization --disable-newlib-wide-orient \
 		--enable-newlib-nano-malloc --disable-newlib-unbuf-stream-opt \
@@ -369,13 +369,13 @@ CFG_NANO = $(CFG_BINUTILS) --prefix=$(SYSROOT)/nano \
 .PHONY: nano
 nano: $(SRC)/nano/configure
 	rm -rf $(TMP)/$@ ; mkdir $(TMP)/$@ ; cd $(TMP)/$@ ;\
-		$(XPATH) $< $(CFG_ALL) $(CFG_NANO)
-# &&\
-#			$(XPATH) $(MAKE_J) &&\
-#			$(XPATH) $(MAKE) install
+		$(XPATH) $< $(CFG_ALL) $(CFG_NANO) &&\
+			$(XPATH) $(MAKE_J) &&\
+			$(XPATH) $(MAKE) install
 
 $(SRC)/nano/configure:
-	cd $(SRC) ; git clone -b newlib-nano-2.1 --depth=1 https://github.com/32bitmicro/newlib-nano-2.git nano
+	cd $(SRC) ; git clone -b newlib-nano-2.1 --depth=1 https://github.com/32bitmicro/newlib-nano-2.git nano &&\
+	chmod +x $@
 
 ## @}
 
